@@ -29,9 +29,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </AdditionalFiles>
       <None Remove="README.txt" />
-      <AdditionalFiles Include="README.txt">
+      <None Include="README.md">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </AdditionalFiles>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
