@@ -1,0 +1,1 @@
+SoulsGLTF.exe --b %*

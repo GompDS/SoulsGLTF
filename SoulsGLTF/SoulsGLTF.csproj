@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="SharpGLTF.Core" Version="1.0.4" />
+      <PackageReference Include="SharpGLTF.Toolkit" Version="1.0.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="ExportGLB.bat" />
+      <AdditionalFiles Include="ExportGLB.bat">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </AdditionalFiles>
+      <None Remove="Resources\BankDS3.xml" />
+      <AdditionalFiles Include="ExportGLTFWithOnlyOneBin.bat">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </AdditionalFiles>
+      <AdditionalFiles Include="Resources\BankDS3.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </AdditionalFiles>
+      <None Remove="ExternalTools/**" />
+      <AdditionalFiles Include="ExternalTools/**">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </AdditionalFiles>
+      <None Remove="README.txt" />
+      <AdditionalFiles Include="README.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </AdditionalFiles>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SoulsFormats\SoulsAssetPipeline\SoulsAssetPipeline.csproj" />
+      <ProjectReference Include="..\SoulsFormats\SoulsFormats\SoulsFormats.csproj" />
+    </ItemGroup>
+
+</Project>

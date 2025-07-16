@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoulsGLTF", "SoulsGLTF\SoulsGLTF.csproj", "{139CACC0-D8F2-43A6-B483-52D38C50EEAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoulsFormats", "SoulsFormats\SoulsFormats\SoulsFormats.csproj", "{BD91D214-51E5-4DD7-9F04-61003DD8BBE7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoulsAssetPipeline", "SoulsFormats\SoulsAssetPipeline\SoulsAssetPipeline.csproj", "{0F36B214-5E17-4487-BFEB-4488629AD3BA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{139CACC0-D8F2-43A6-B483-52D38C50EEAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{139CACC0-D8F2-43A6-B483-52D38C50EEAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{139CACC0-D8F2-43A6-B483-52D38C50EEAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{139CACC0-D8F2-43A6-B483-52D38C50EEAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD91D214-51E5-4DD7-9F04-61003DD8BBE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD91D214-51E5-4DD7-9F04-61003DD8BBE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD91D214-51E5-4DD7-9F04-61003DD8BBE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD91D214-51E5-4DD7-9F04-61003DD8BBE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F36B214-5E17-4487-BFEB-4488629AD3BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F36B214-5E17-4487-BFEB-4488629AD3BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F36B214-5E17-4487-BFEB-4488629AD3BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F36B214-5E17-4487-BFEB-4488629AD3BA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
