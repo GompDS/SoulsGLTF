@@ -29,9 +29,21 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </AdditionalFiles>
       <None Remove="README.txt" />
-      <None Include="README.md">
+      <AdditionalFiles Include="README.txt">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+      </AdditionalFiles>
+      <None Remove="LICENSES\DSMapStudio.txt" />
+      <AdditionalFiles Include="LICENSES\DSMapStudio.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </AdditionalFiles>
+      <None Remove="LICENSES\SharpGLTF.txt" />
+      <AdditionalFiles Include="LICENSES\SharpGLTF.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </AdditionalFiles>
+      <None Remove="LICENSES\SoulsFormatsNEXT.txt" />
+      <AdditionalFiles Include="LICENSES\SoulsFormatsNEXT.txt">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </AdditionalFiles>
     </ItemGroup>
 
     <ItemGroup>

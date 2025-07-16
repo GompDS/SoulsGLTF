@@ -59,8 +59,11 @@ public class hkaAnimationContainer : hkReferencedObject
                     hkaAnimationBinding binding = new hkaAnimationBinding();
                     binding.Name = nextSibling.SafeGetAttribute("name");
                     nextSibling = binding.ReadXml(nextSibling);
-                    binding.Animation = Animations.First(x => x.Name == binding.Animation.Name);
-                    
+                    hkaAnimation? anim = Animations.FirstOrDefault(x => x != null &&  x.Name == binding.Animation.Name);
+                    if (anim != null)
+                    {
+                        binding.Animation = anim;
+                    }
                     Bindings[i] = binding;
                 }
             }

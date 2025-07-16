@@ -38,7 +38,11 @@ public static class FLVERExporting
         // Reset bone node relations
         foreach (string boneName in skeleton.Bones.Select(x => x.Name))
         {
-            FLVER.Node boneNode = flver.Nodes.First(x => x.Name == boneName);
+            FLVER.Node? boneNode = flver.Nodes.FirstOrDefault(x => x.Name == boneName);
+            if (boneNode == null)
+            {
+                continue;
+            }
             boneNode.ParentIndex = -1;
             boneNode.FirstChildIndex = -1;
             boneNode.NextSiblingIndex = -1;
@@ -47,7 +51,15 @@ public static class FLVERExporting
                 
         for (int i = 0; i < skeleton.Bones.Length; i++)
         {
-            FLVER.Node boneNode = flver.Nodes.First(x => x.Name == skeleton.Bones[i].Name);
+            FLVER.Node? boneNode = flver.Nodes.FirstOrDefault(x => x.Name == skeleton.Bones[i].Name);
+            if (boneNode == null)
+            {
+                boneNode = new FLVER.Node()
+                {
+                    Name = skeleton.Bones[i].Name
+                };
+                flver.Nodes.Add(boneNode);
+            }
             short boneIndex = (short)flver.Nodes.IndexOf(boneNode);
             if (i > 0)
             {
@@ -84,10 +96,10 @@ public static class FLVERExporting
     
     public static void ExportFLVERToGLTF(FLVER2 flver, hkaSkeleton? skeleton, List<hkaAnimation> animations, string fileName, bool binaryOutput = false, bool consolidateBuffers = false)
     {
-        FLVER2MaterialInfoBank matInfoBank = FLVER2MaterialInfoBank.ReadFromXML("Resources/BankDS3.xml");
+        FLVER2MaterialInfoBank matInfoBank = new FLVER2MaterialInfoBank();//FLVER2MaterialInfoBank.ReadFromXML("Resources/BankDS3.xml");
         
         bool isSkinned = false;
-        AffineTransform baseMeshTransform = AffineTransform.Identity;
+        AffineTransform masterTransform = AffineTransform.Identity;
         
         if (skeleton != null)
         {
@@ -96,14 +108,16 @@ public static class FLVERExporting
             FixFlverBoneNodesUsingHkaSkeletonHierarchy(flver, skeleton);
                 
             // Get master bone transform
-            FLVER.Node masterNode = flver.Nodes.First(x => x.Name == "Master");
+            FLVER.Node masterNode = flver.Nodes.First(x => x.Name.Equals("Master", StringComparison.OrdinalIgnoreCase));
                 
             Matrix4x4 rotationMatrix =  Matrix4x4.CreateRotationX(masterNode.Rotation.X) *
                                         Matrix4x4.CreateRotationZ(masterNode.Rotation.Z) * 
                                         Matrix4x4.CreateRotationY(masterNode.Rotation.Y);
 
-            baseMeshTransform = new (masterNode.Scale, 
-                Quaternion.CreateFromRotationMatrix(rotationMatrix), masterNode.Translation);
+            AffineTransform fixedTransform = GetTransformationMatrix(masterNode.Translation, masterNode.Rotation, masterNode.Scale);
+            
+            masterTransform = new (Vector3.One, 
+                Quaternion.CreateFromRotationMatrix(rotationMatrix), Math.Abs(fixedTransform.Translation.Z) < 0.000001 ? fixedTransform.Translation : masterNode.Translation);
         }
         
         ModelRoot model = ModelRoot.CreateModel();
@@ -122,16 +136,20 @@ public static class FLVERExporting
                 Node glNode = model.CreateLogicalNode();
                 glNode.Name = flvNode.Name;
                 flverNodeToGlNodeMap.Add(i, (short)glNode.LogicalIndex);
-                
-                glNode.LocalTransform = GetTransformationMatrix(flvNode.Translation, flvNode.Rotation, flvNode.Scale);
+
+                if (flvNode.Name != "Master")
+                {
+                    glNode.LocalTransform = GetTransformationMatrix(flvNode.Translation, flvNode.Rotation, flvNode.Scale);
+                }
 
                 // Define node as skeleton root if is a skinned mesh
                 if (isSkinned)
                 {
-                    if (flvNode.Name == "Master")
+                    if (flvNode.Name.Equals("Master", StringComparison.OrdinalIgnoreCase))
                     {
                         skeletonIndex = i;
                         jointIndices.Add(i);
+                        glNode.LocalTransform = GetTransformationMatrix(Vector3.Zero, flvNode.Rotation, Vector3.One);
                     }
                 }
                                     
@@ -169,7 +187,7 @@ public static class FLVERExporting
             
             if (nodeMeshes.Count > 0)
             {
-                model.CreateGLTFMeshFromFlverMesh(flver, nodeMeshes, baseMeshTransform.Matrix, matInfoBank, 
+                model.CreateGLTFMeshFromFlverMesh(flver, nodeMeshes, masterTransform.Matrix, matInfoBank, 
                     jointIndices);
                 if (skin != null && skin.Joints.Contains(model.LogicalNodes[n]))
                 {
@@ -279,14 +297,15 @@ public static class FLVERExporting
                 DimensionType.MAT4, EncodingType.FLOAT, false);
         }*/
         
+        string cwd = AppDomain.CurrentDomain.BaseDirectory;
         if (binaryOutput)
         {
-            if (!Directory.Exists("Output")) Directory.CreateDirectory("Output");
-            model.Save($"Output/{fileName}.glb", new WriteSettings());
+            if (!Directory.Exists(cwd + "Output")) Directory.CreateDirectory(cwd + "Output");
+            model.Save(cwd + $"Output/{fileName}.glb", new WriteSettings());
         }
         else
         {
-            string outputFolder = $"Output/{fileName}";
+            string outputFolder = cwd + $"Output/{fileName}";
             if (!Directory.Exists(outputFolder)) DirectoryUtils.CreateAllDirectories(outputFolder);
             model.Save($"{outputFolder}/{fileName}.gltf", new WriteSettings()
             {
@@ -698,16 +717,11 @@ public static class FLVERExporting
         
         
         flverNodeToGlNodeMap.Add(childIndex, (short)glNode.LogicalIndex);
-
-        if (flvNode.Name == "R_Finger2")
-        {
-            Console.WriteLine();
-        }
         
         if (skeleton != null)
         {
             jointIndices.Add(childIndex);
-            
+
             hkaSkeleton.BonePose bonePose = skeleton.ReferencePose[jointIndices.Count - 1];
             Vector3 translation = new Vector3(bonePose.Translation.X, bonePose.Translation.Y, bonePose.Translation.Z * -1);
             Quaternion rotation = new Quaternion(bonePose.Rotation.X * -1, bonePose.Rotation.Y * -1, bonePose.Rotation.Z, bonePose.Rotation.W);
