@@ -121,6 +121,8 @@ public static class FLVERExporting
         }
         
         ModelRoot model = ModelRoot.CreateModel();
+        Scene scene = model.UseScene(fileName);
+        model.DefaultScene = scene;
         
         Dictionary<short, short> flverNodeToGlNodeMap = new Dictionary<short, short>();
         
@@ -133,8 +135,9 @@ public static class FLVERExporting
 
             if (flver.Nodes[i].ParentIndex == -1)
             {
-                Node glNode = model.CreateLogicalNode();
-                glNode.Name = flvNode.Name;
+                Node glNode = scene.CreateNode(flvNode.Name);
+                //Node glNode = model.CreateLogicalNode();
+                //glNode.Name = flvNode.Name;
                 flverNodeToGlNodeMap.Add(i, (short)glNode.LogicalIndex);
 
                 if (flvNode.Name != "Master")
@@ -188,7 +191,7 @@ public static class FLVERExporting
             if (nodeMeshes.Count > 0)
             {
                 model.CreateGLTFMeshFromFlverMesh(flver, nodeMeshes, masterTransform.Matrix, matInfoBank, 
-                    jointIndices);
+                    jointIndices, isSkinned);
                 if (skin != null && skin.Joints.Contains(model.LogicalNodes[n]))
                 {
                     Node newNode = model.CreateLogicalNode();
@@ -327,7 +330,7 @@ public static class FLVERExporting
     }
 
     private static void CreateGLTFMeshFromFlverMesh(this ModelRoot model, FLVER2 flver, List<FLVER2.Mesh> flvMeshes,
-        Matrix4x4 masterBoneRotation, FLVER2MaterialInfoBank matInfoBank, List<short> jointIndices)
+        Matrix4x4 masterBoneRotation, FLVER2MaterialInfoBank matInfoBank, List<short> jointIndices, bool isSkinned)
     {
         Mesh glMesh = model.CreateMesh(flver.Nodes[flvMeshes[0].NodeIndex].Name);
         
@@ -335,7 +338,7 @@ public static class FLVERExporting
         {
             FLVER2.FaceSet highestPolyFaceSet = flvMesh.FaceSets.OrderByDescending(x => x.Indices.Count).First();
             
-            GetMeshVertexData(flver, flvMesh, out VertexDataFlags vertexDataFlags, out int vertexSize, 
+            GetMeshVertexData(flver, flvMesh, isSkinned, out VertexDataFlags vertexDataFlags, out int vertexSize, 
                 out int colorCount, out int uvCount);
         
             BinaryWriterEx bw = new (false);
@@ -590,7 +593,8 @@ public static class FLVERExporting
         }
     }
 
-    private static void GetMeshVertexData(FLVER2 flver, FLVER2.Mesh flvMesh, out VertexDataFlags flags, out int vertexSize, out int colorCount, out int uvCount)
+    private static void GetMeshVertexData(FLVER2 flver, FLVER2.Mesh flvMesh, bool isSkinned,
+        out VertexDataFlags flags, out int vertexSize, out int colorCount, out int uvCount)
     {
         flags = VertexDataFlags.Empty;
         vertexSize = 0;
@@ -673,6 +677,7 @@ public static class FLVERExporting
                         }
                         break;
                     case FLVER.LayoutSemantic.BoneIndices:
+                        if (!isSkinned) break;
                         if (flags.HasFlag(VertexDataFlags.Joints)) break;
                         flags |= VertexDataFlags.Joints;
                         vertexSize += 24; // 8 for the indices, 16 for the weights
