@@ -432,15 +432,23 @@ public static class FLVERExporting
                     //float correctBoneWeight2 = v.BoneIndices[2] == 0 ? 0 : v.BoneWeights[2];
                     //float correctBoneWeight3 = v.BoneIndices[3] == 0 ? 0 : v.BoneWeights[3];
 
+                    if (flvMesh.Vertices.IndexOf(v) == 416)
+                    {
+                        Console.WriteLine();
+                    }
+                    
                     float sum = v.BoneWeights[0] + v.BoneWeights[1] + v.BoneWeights[2] + v.BoneWeights[3];
 
-
-                    Vector4 fixedWeights = new Vector4(
-                        v.BoneWeights[0] / sum,
-                        v.BoneWeights[1] / sum,
-                        v.BoneWeights[2] / sum,
-                        v.BoneWeights[3] / sum);
-
+                    Vector4 fixedWeights = new Vector4(1, 0, 0, 0); // fallback weights value just in case because weights cant all be zero
+                    if (sum != 0)
+                    {
+                        fixedWeights = new Vector4(
+                            v.BoneWeights[0] / sum,
+                            v.BoneWeights[1] / sum,
+                            v.BoneWeights[2] / sum,
+                            v.BoneWeights[3] / sum);
+                    }
+                    
                     bw.WriteVector4(fixedWeights);
                 }
 
