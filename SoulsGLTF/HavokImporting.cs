@@ -1,5 +1,10 @@
+using HKX2;
 using SoulsFormats;
 using SoulsGLTF.Havok;
+using SoulsGLTF.Util;
+using hkaAnimation = SoulsGLTF.Havok.hkaAnimation;
+using hkaAnimationContainer = SoulsGLTF.Havok.hkaAnimationContainer;
+using hkaSkeleton = SoulsGLTF.Havok.hkaSkeleton;
 
 namespace SoulsGLTF;
 
@@ -120,6 +125,11 @@ public static class HavokImporting
     {
         skeleton = null;
         animations = new List<hkaAnimation>();
+
+        //BinaryReaderEx br = new BinaryReaderEx(false, bf.Bytes);
+        
+        //PackFileDeserializer packFileDeserializer = new PackFileDeserializer();
+        //IHavokObject hkFile = packFileDeserializer.Deserialize(br);
         
         if (hkPackFile.IsRead(bf.Bytes, out hkPackFile? packFile, compendiumFile?.Bytes))
         {

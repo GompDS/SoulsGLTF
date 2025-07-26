@@ -194,7 +194,7 @@ public static class FLVERExporting
                     jointIndices, isSkinned);
                 if (skin != null && skin.Joints.Contains(model.LogicalNodes[n]))
                 {
-                    Node newNode = model.CreateLogicalNode();
+                    Node newNode = scene.CreateNode();
                     newNode.Name = model.LogicalNodes[n].Name + "_mesh";
                     newNode.Mesh = model.LogicalMeshes[^1];
                     newNode.Skin = skin;

@@ -47,6 +47,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\SoulsFormats\Havoc\Havoc.csproj" />
       <ProjectReference Include="..\SoulsFormats\SoulsAssetPipeline\SoulsAssetPipeline.csproj" />
       <ProjectReference Include="..\SoulsFormats\SoulsFormats\SoulsFormats.csproj" />
     </ItemGroup>
